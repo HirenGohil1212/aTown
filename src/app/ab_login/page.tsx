@@ -67,7 +67,7 @@ export default function LoginPage() {
       login(state.user as ClientUser); 
       
       if (state.user.role === 'admin') {
-        router.push('/admin');
+        router.push('/admin/dashboard');
       } else {
         router.push('/');
       }
