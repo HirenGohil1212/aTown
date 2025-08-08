@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer);
 
     // This is the key change: Return a public URL that points directly to the file
+    // This URL will be handled by our new custom route handler, not the static file server.
     const publicUrl = `/uploads/${uploadPath}/${newFilename}`;
 
     return NextResponse.json({ success: true, url: publicUrl });
