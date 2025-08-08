@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useActionState, useEffect } from 'react';
@@ -23,7 +22,7 @@ export default function SignUpPage() {
         title: 'Signup Successful',
         description: 'You can now log in with your new account.',
       });
-      router.push('/login');
+      router.push('/ab_login');
     }
   }, [state, router, toast]);
 
@@ -58,7 +57,7 @@ export default function SignUpPage() {
           </form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{' '}
-            <Link href="/login" className="underline text-primary">
+            <Link href="/ab_login" className="underline text-primary">
               Log in
             </Link>
           </div>
