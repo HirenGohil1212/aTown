@@ -4,7 +4,7 @@
 import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/actions/user-actions';
+import { loginUser, checkAdminExists } from '@/actions/user-actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,26 +13,28 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { AppSettings, User } from '@/types';
 import { useUser } from '@/hooks/use-user';
-import { checkAdminExists } from '@/actions/user-actions';
 
-async function fetchSettings(): Promise<Pick<AppSettings, 'allowSignups'>> {
+async function fetchSignupPolicy(): Promise<{ showSignup: boolean }> {
     try {
+        const adminExists = await checkAdminExists();
+        if (!adminExists) {
+            // If no admin exists, always allow signup for the first one.
+            return { showSignup: true };
+        }
+        
+        // If an admin exists, respect the database setting.
         const res = await fetch('/api/settings');
         if (!res.ok) {
-          console.error("Failed to fetch settings, defaulting to allow signups.");
-          return { allowSignups: true };
+          console.error("Failed to fetch settings, defaulting to not allow signups.");
+          return { showSignup: false };
         }
         const data = await res.json();
-        return { allowSignups: data.allowSignups };
-    } catch {
-        console.error("Error fetching settings, defaulting to allow signups.");
- return { allowSignups: true };
-    }
+        return { showSignup: data.allowSignups };
 
-    // Check if there are any existing admin users
-    const adminExists = await checkAdminExists();
-    if (!adminExists) {
- return { allowSignups: true };
+    } catch(e) {
+        console.error("Error fetching signup policy:", e);
+        // Default to not showing the link if there's an error.
+        return { showSignup: false };
     }
 }
 
@@ -43,17 +45,17 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { login } = useUser();
-  const [allowSignups, setAllowSignups] = useState(true);
+  const [showSignupLink, setShowSignupLink] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
   useEffect(() => {
-    async function loadSettings() {
+    async function loadSignupPolicy() {
       setIsLoadingSettings(true);
-      const { allowSignups } = await fetchSettings();
-      setAllowSignups(allowSignups);
+      const { showSignup } = await fetchSignupPolicy();
+      setShowSignupLink(showSignup);
       setIsLoadingSettings(false);
     }
-    loadSettings();
+    loadSignupPolicy();
   }, []);
 
   useEffect(() => {
@@ -63,7 +65,12 @@ export default function LoginPage() {
         description: 'Welcome back!',
       });
       login(state.user as ClientUser); 
-      router.push('/admin');
+      
+      if (state.user.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
     }
     if (state?.message) {
         toast({
@@ -98,7 +105,7 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        {!isLoadingSettings && allowSignups && (
+        {!isLoadingSettings && showSignupLink && (
             <CardFooter className="flex flex-col items-center">
                 <div className="text-center text-sm">
                     Don't have an account?{' '}

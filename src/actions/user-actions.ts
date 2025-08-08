@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { query, type QueryResult } from '@/lib/db';
+import { query } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import type { User } from '@/types';
 
@@ -24,16 +24,23 @@ export async function signupUser(prevState: unknown, formData: FormData) {
   const { email, password } = validatedFields.data;
 
   try {
-    const existingUsers: QueryResult = await query('SELECT id FROM users WHERE email = ?', [email]);
-    if (Array.isArray(existingUsers) && 'rows' in existingUsers && Array.isArray(existingUsers.rows) && existingUsers.rows.length > 0) {
+    const existingUsers: any[] = await query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existingUsers.length > 0) {
       return {
         message: 'An account with this email already exists.',
       };
     }
+    
+    // Check if this is the very first user. If so, make them an admin.
+    const allUsers: any[] = await query('SELECT id FROM users');
+    const role = allUsers.length === 0 ? 'admin' : 'user';
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await query('INSERT INTO users (email, password) VALUES (?, ?)', [email, hashedPassword]);
-
+    await query('INSERT INTO users (email, password, role) VALUES (?, ?, ?)', [email, hashedPassword, role]);
+    
+    // If the first admin was just created, a revalidation might be needed for the login page
+    // but a redirect to login is sufficient.
+    
     return { success: true };
   } catch (error) {
     console.error('Signup Error:', error);
@@ -64,8 +71,8 @@ export async function loginUser(prevState: unknown, formData: FormData): Promise
     const { email, password } = validatedFields.data;
 
     try {
-        const users: QueryResult = await query('SELECT id, email, role, password FROM users WHERE email = ?', [email]);
-        const user = Array.isArray(users) && 'rows' in users && Array.isArray(users.rows) ? users.rows[0] : undefined;
+        const users: any[] = await query('SELECT id, email, role, password FROM users WHERE email = ?', [email]);
+        const user = users[0];
 
         if (!user) {
             return { message: 'No user found with this email.' };
@@ -93,13 +100,18 @@ export async function loginUser(prevState: unknown, formData: FormData): Promise
     }
 }
 
+/**
+ * Checks if at least one admin user exists in the database.
+ * @returns A boolean indicating if an admin exists.
+ */
 export async function checkAdminExists(): Promise<boolean> {
-    try {
-        const admins: QueryResult = await query('SELECT id FROM users WHERE role = ?', ['admin']);
-        return Array.isArray(admins) && 'rows' in admins && Array.isArray(admins.rows) && admins.rows.length > 0;
-    } catch (error) {
-        console.error('Error checking for admin existence:', error);
-        // Assume no admin exists in case of error, to allow initial setup
-        return false;
-    }
+  try {
+    const admins: any[] = await query("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+    return admins.length > 0;
+  } catch (error) {
+    console.error("Failed to check for admin user:", error);
+    // In case of a DB error, it's safer to assume an admin might exist
+    // to prevent locking out the signup form unnecessarily.
+    return true;
+  }
 }
