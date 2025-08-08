@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { DbTestButton } from './db-test-button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useUser } from '@/hooks/use-user';
@@ -160,7 +159,6 @@ export default function Header() {
 
         <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
           
-          <DbTestButton />
           <Button asChild variant="outline" size="icon" className="relative border-accent text-accent hover:bg-accent hover:text-accent-foreground">
             <Link href="/cart">
               <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
