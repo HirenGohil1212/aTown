@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 140 20% 8%; /* Moody Dark Green */
+    --foreground: 60 30% 96%; /* Off-White */
+
+    --card: 140 20% 12%; /* Slightly Lighter Dark Green */
+    --card-foreground: 60 30% 96%; /* Off-White */
+
+    --popover: 140 20% 5%; /* Darker Popover Green */
+    --popover-foreground: 60 30% 96%; /* Off-White */
+
+    --primary: 45 95% 65%; /* Royal Gold/Yellow */
+    --primary-foreground: 140 25% 10%; /* Dark Green for contrast */
+
+    --secondary: 140 15% 25%; /* Muted Green */
+    --secondary-foreground: 60 30% 96%; /* Off-White */
+
+    --muted: 140 15% 25%; /* Muted Green */
+    --muted-foreground: 140 10% 65%; /* Lighter Muted Green */
+    
+    --accent: 45 95% 65%; /* Royal Gold/Yellow */
+    --accent-foreground: 140 25% 10%; /* Dark Green for contrast */
+
+    --destructive: 0 72% 51%; /* Bright Red */
+    --destructive-foreground: 60 30% 96%; /* Off-White */
+
+    --border: 140 15% 25%; /* Muted Green */
+    --input: 140 15% 28%; /* Lighter Muted Green for Inputs */
+    --ring: 45 95% 65%; /* Royal Gold/Yellow */
+
+    --chart-1: 45 95% 65%;
+    --chart-2: 150 70% 40%;
+    --chart-3: 140 50% 50%;
+    --chart-4: 50 85% 70%;
+    --chart-5: 160 60% 35%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 140 20% 8%; /* Moody Dark Green */
+    --foreground: 60 30% 96%; /* Off-White */
+
+    --card: 140 20% 12%; /* Slightly Lighter Dark Green */
+    --card-foreground: 60 30% 96%; /* Off-White */
+
+    --popover: 140 20% 5%; /* Darker Popover Green */
+    --popover-foreground: 60 30% 96%; /* Off-White */
+
+    --primary: 45 95% 65%; /* Royal Gold/Yellow */
+    --primary-foreground: 140 25% 10%; /* Dark Green for contrast */
+
+    --secondary: 140 15% 25%; /* Muted Green */
+    --secondary-foreground: 60 30% 96%; /* Off-White */
+
+    --muted: 140 15% 25%; /* Muted Green */
+    --muted-foreground: 140 10% 65%; /* Lighter Muted Green */
+    
+    --accent: 45 95% 65%; /* Royal Gold/Yellow */
+    --accent-foreground: 140 25% 10%; /* Dark Green for contrast */
+
+    --destructive: 0 72% 51%; /* Bright Red */
+    --destructive-foreground: 60 30% 96%; /* Off-White */
+
+    --border: 140 15% 25%; /* Muted Green */
+    --input: 140 15% 28%; /* Lighter Muted Green for Inputs */
+    --ring: 45 95% 65%; /* Royal Gold/Yellow */
+    
+    --chart-1: 45 95% 65%;
+    --chart-2: 150 70% 40%;
+    --chart-3: 140 50% 50%;
+    --chart-4: 50 85% 70%;
+    --chart-5: 160 60% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
