@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { AppSettings, User } from '@/types';
 import { useUser } from '@/hooks/use-user';
+import { checkAdminExists } from '@/actions/user-actions';
 
 async function fetchSettings(): Promise<Pick<AppSettings, 'allowSignups'>> {
     try {
@@ -25,7 +26,13 @@ async function fetchSettings(): Promise<Pick<AppSettings, 'allowSignups'>> {
         return { allowSignups: data.allowSignups };
     } catch {
         console.error("Error fetching settings, defaulting to allow signups.");
-        return { allowSignups: true };
+ return { allowSignups: true };
+    }
+
+    // Check if there are any existing admin users
+    const adminExists = await checkAdminExists();
+    if (!adminExists) {
+ return { allowSignups: true };
     }
 }
 

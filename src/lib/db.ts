@@ -1,6 +1,6 @@
 
 // src/lib/db.ts
-import mysql from 'mysql2/promise';
+import mysql, { type QueryResult } from 'mysql2/promise';
 
 // Database configuration for the remote freesqldatabase.com server.
 const dbConfig = {
@@ -50,3 +50,5 @@ export async function query(sql: string, params: any[] = []) {
     }
   }
 }
+
+export { type QueryResult };

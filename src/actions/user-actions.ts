@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { query } from '@/lib/db';
+import { query, type QueryResult } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import type { User } from '@/types';
 
@@ -24,8 +24,8 @@ export async function signupUser(prevState: unknown, formData: FormData) {
   const { email, password } = validatedFields.data;
 
   try {
-    const existingUsers: any[] = await query('SELECT id FROM users WHERE email = ?', [email]);
-    if (existingUsers.length > 0) {
+    const existingUsers: QueryResult = await query('SELECT id FROM users WHERE email = ?', [email]);
+    if (Array.isArray(existingUsers) && 'rows' in existingUsers && Array.isArray(existingUsers.rows) && existingUsers.rows.length > 0) {
       return {
         message: 'An account with this email already exists.',
       };
@@ -64,8 +64,8 @@ export async function loginUser(prevState: unknown, formData: FormData): Promise
     const { email, password } = validatedFields.data;
 
     try {
-        const users: any[] = await query('SELECT id, email, role, password FROM users WHERE email = ?', [email]);
-        const user = users[0];
+        const users: QueryResult = await query('SELECT id, email, role, password FROM users WHERE email = ?', [email]);
+        const user = Array.isArray(users) && 'rows' in users && Array.isArray(users.rows) ? users.rows[0] : undefined;
 
         if (!user) {
             return { message: 'No user found with this email.' };
@@ -90,5 +90,16 @@ export async function loginUser(prevState: unknown, formData: FormData): Promise
     } catch (error) {
         console.error('Login Error:', error);
         return { message: 'An unexpected database error occurred.' };
+    }
+}
+
+export async function checkAdminExists(): Promise<boolean> {
+    try {
+        const admins: QueryResult = await query('SELECT id FROM users WHERE role = ?', ['admin']);
+        return Array.isArray(admins) && 'rows' in admins && Array.isArray(admins.rows) && admins.rows.length > 0;
+    } catch (error) {
+        console.error('Error checking for admin existence:', error);
+        // Assume no admin exists in case of error, to allow initial setup
+        return false;
     }
 }

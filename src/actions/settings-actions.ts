@@ -12,8 +12,8 @@ import { query } from '@/lib/db';
  */
 export async function getSettings(): Promise<AppSettings> {
     try {
-        const results: any[] = await query('SELECT * FROM settings WHERE id = 1');
-        if (results.length === 0) {
+        const results = await query('SELECT * FROM settings WHERE id = 1');
+        if (!Array.isArray(results) || results.length === 0) {
             // This case should ideally not happen if db-init is run
             const defaultSettings = {
                 allowSignups: false,
@@ -27,10 +27,11 @@ export async function getSettings(): Promise<AppSettings> {
             return defaultSettings;
         }
         const dbSettings = results[0];
-        // Convert TinyInt to boolean
+        // Explicitly map database result to AppSettings type
         return {
-            ...dbSettings,
-            allowSignups: Boolean(dbSettings.allowSignups)
+            allowSignups: Boolean((dbSettings as any).allowSignups),
+            whatsappNumber: String((dbSettings as any).whatsappNumber),
+            minOrderQuantity: Number((dbSettings as any).minOrderQuantity),
         };
     } catch (error) {
         console.error("Failed to fetch settings, returning defaults:", error);
