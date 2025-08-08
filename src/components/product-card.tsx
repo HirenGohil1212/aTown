@@ -33,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 src={product.image || "https://placehold.co/600x600.png"}
                 alt={product.name}
                 fill
-                className="object-contain group-hover:scale-110 transition-transform duration-500 ease-in-out p-4"
+                className="object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
                 data-ai-hint={`${product.category} bottle`}
                 sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 23vw"
               />
