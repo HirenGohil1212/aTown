@@ -29,46 +29,6 @@ import { Loader2 } from 'lucide-react';
 import { useUser } from '@/hooks/use-user';
 
 
-function DbInitButton() {
-    const [isPending, startTransition] = useTransition();
-    const { toast } = useToast();
-
-    const handleInitDb = async () => {
-        startTransition(async () => {
-            try {
-                const res = await fetch('/api/db-init', { method: 'POST' });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'An unknown error occurred.');
-                
-                toast({
-                    title: "Database Initialized",
-                    description: data.message,
-                });
-            } catch (error) {
-                const errorMessage = error instanceof Error ? error.message : "Failed to initialize.";
-                toast({
-                    variant: "destructive",
-                    title: "Initialization Failed",
-                    description: errorMessage,
-                });
-            }
-        });
-    }
-    
-    return (
-        <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={handleInitDb} 
-            disabled={isPending}
-            title="Setup Database Tables"
-        >
-            {isPending ? <Loader2 className="animate-spin" /> : <Wrench />}
-            <span className="sr-only">Setup Database Tables</span>
-        </Button>
-    );
-}
-
 function AdminMenuCta() {
     const { user, isAdmin, logout } = useUser();
     const router = useRouter();
@@ -199,7 +159,7 @@ export default function Header() {
 
 
         <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
-          <DbInitButton />
+          
           <DbTestButton />
           <Button asChild variant="outline" size="icon" className="relative border-accent text-accent hover:bg-accent hover:text-accent-foreground">
             <Link href="/cart">
