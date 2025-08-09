@@ -6,7 +6,7 @@ export type Product = {
   price: number;
   quantity: number; // e.g., 750 for 750ml
   image: string;
-  description: string;
+  description?: string;
   details?: string[];
   featured?: boolean;
   recipe?: {

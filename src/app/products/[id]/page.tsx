@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Droplets className="h-4 w-4 mr-2" />
             <span>{product.quantity}ml</span>
           </div>
-          <p className="text-muted-foreground mb-6 leading-relaxed">{product.description}</p>
+          {product.description && <p className="text-muted-foreground mb-6 leading-relaxed">{product.description}</p>}
           
           {product.details && product.details.length > 0 && (
             <div className="mb-8">

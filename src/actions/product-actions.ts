@@ -10,7 +10,7 @@ import { query } from '@/lib/db';
 // Zod schema for product validation
 const productSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
-  description: z.string().min(1, { message: 'Description is required' }),
+  description: z.string().optional(),
   price: z.coerce.number().positive({ message: 'Price must be a positive number' }),
   quantity: z.coerce.number().positive({ message: 'Quantity must be a positive number' }),
   category: z.string().min(1, { message: 'Category is required' }),
@@ -29,7 +29,8 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     return { error: validatedFields.error.flatten().fieldErrors };
   }
   
-  let { name, description, price, quantity, category, featured, image } = validatedFields.data;
+  let { name, price, quantity, category, featured, image } = validatedFields.data;
+  const description = ''; // Set description to empty string
   
   // If the 'image' field from the form is empty, it means no file was uploaded.
   // In this case, we create a placeholder. Otherwise, we use the URL provided by the upload.
@@ -77,7 +78,8 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
     return { error: validatedFields.error.flatten().fieldErrors };
   }
     
-  let { name, description, price, quantity, category, featured, image } = validatedFields.data;
+  let { name, price, quantity, category, featured, image } = validatedFields.data;
+  const description = ''; // Set description to empty string
 
   // If the image field is empty during an update, it means the user did not upload a new one.
   // We should preserve the existing image in this case.

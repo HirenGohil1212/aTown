@@ -114,7 +114,7 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
         <div className="flex items-center gap-4">
           <div className="w-32 h-32 border rounded-md flex items-center justify-center bg-muted/30">
             {imagePreview ? (
-              <Image src={imagePreview} alt="Image Preview" width={128} height={128} className="object-contain w-full h-full rounded-md" />
+              <Image src={imagePreview} alt="Image Preview" width={128} height={128} className="object-cover w-full h-full rounded-md" />
             ) : (
               <ImageIcon className="w-16 h-16 text-muted-foreground" />
             )}
@@ -136,12 +136,6 @@ export function EditProductForm({ categories, product }: EditProductFormProps) {
           </div>
         </div>
         {state?.error?.image && <div className="text-destructive text-sm">{state.error.image[0]}</div>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" required defaultValue={product.description} />
-        {state?.error?.description && <div className="text-destructive text-sm">{state.error.description[0]}</div>}
       </div>
       
       <div className="flex items-center space-x-2">
